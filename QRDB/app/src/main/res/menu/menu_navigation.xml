@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/your_qr_codes"
+            android:title="@string/your_qr_codes_menu_item" />
+        <item
+            android:id="@+id/scan_qr_code"
+            android:title="@string/scan_qr_code_menu_item" />
+        <item
+            android:id="@+id/scanned_qr_codes"
+            android:title="@string/scanned_qr_codes_menu_item" />
+        <item
+            android:id="@+id/create_qr_code"
+            android:title="@string/create_qr_code_menu_item" />
+        <item
+            android:id="@+id/about"
+            android:title="@string/about_menu_item" />
+    </group>
+</menu>
