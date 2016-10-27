@@ -9,10 +9,6 @@ import android.support.v7.widget.Toolbar;
  */
 public class MyQrCodesActivity extends BaseActivity {
 
-    private DrawerLayout drawerLayout;
-    private Toolbar toolbar;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

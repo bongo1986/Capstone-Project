@@ -1,5 +1,6 @@
 package com.greg.qrdb;
 
+import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -32,20 +33,37 @@ public class BaseActivity  extends AppCompatActivity {
                 int id = menuItem.getItemId();
 
                 switch (id){
-                   /* case R.id.home:
-                        Toast.makeText(getApplicationContext(),"Home",Toast.LENGTH_SHORT).show();
+                   case R.id.about:
+                       drawerLayout.closeDrawers();
+                       Intent goToAboutActivity = new Intent(getApplicationContext(), AboutActivity.class);
+                       startActivity(goToAboutActivity);
+                       finish();
+                       break;
+                    case R.id.create_qr_code:
                         drawerLayout.closeDrawers();
-                        break;
-                    case R.id.settings:
-                        Toast.makeText(getApplicationContext(),"Settings",Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.trash:
-                        Toast.makeText(getApplicationContext(),"Trash",Toast.LENGTH_SHORT).show();
-                        drawerLayout.closeDrawers();
-                        break;
-                    case R.id.logout:
+                        Intent goToCreateNewQrCodeActivity = new Intent(getApplicationContext(), CreateNewQrCodeActivity.class);
+                        startActivity(goToCreateNewQrCodeActivity);
                         finish();
-                    */
+                        break;
+                    case R.id.my_qr_codes:
+                        drawerLayout.closeDrawers();
+                        Intent goToMyQrCodesActivity = new Intent(getApplicationContext(), MyQrCodesActivity.class);
+                        startActivity(goToMyQrCodesActivity);
+                        finish();
+                        break;
+                    case R.id.scan_qr_code:
+                        drawerLayout.closeDrawers();
+                        Intent goToScanActivity = new Intent(getApplicationContext(), ScanActivity.class);
+                        startActivity(goToScanActivity);
+                        finish();
+                        break;
+                    case R.id.scanned_qr_codes:
+                        drawerLayout.closeDrawers();
+                        Intent goToScannedQrCodesActivity = new Intent(getApplicationContext(), ScannedQrCodesActivity.class);
+                        startActivity(goToScannedQrCodesActivity);
+                        finish();
+                        break;
+
                 }
                 return true;
             }
