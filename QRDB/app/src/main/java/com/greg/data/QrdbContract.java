@@ -29,10 +29,7 @@ public class QrdbContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CODES ;
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CODES ;
+
 
 
         public static final String TABLE_NAME = "code";
@@ -40,6 +37,8 @@ public class QrdbContract {
         //public static final String COLUMN_CODE_ID = "code_id";
         public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_DESCRIPTION = "description";
+        public static final String COLUMN_QR_GUID = "qr_guid";
+        public static final String COLUMN_SCAN_COUNT = "scan_count";
         public static final String COLUMN_QR_CODE_IMAGE_DATA = "qr_code_image_data";
     }
 

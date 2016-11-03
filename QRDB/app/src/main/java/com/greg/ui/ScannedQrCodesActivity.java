@@ -1,6 +1,8 @@
-package com.greg.qrdb;
+package com.greg.ui;
 
 import android.os.Bundle;
+
+import com.greg.qrdb.R;
 
 /**
  * Created by Greg on 24-10-2016.

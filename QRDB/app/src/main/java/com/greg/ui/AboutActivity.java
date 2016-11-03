@@ -1,16 +1,18 @@
-package com.greg.qrdb;
+package com.greg.ui;
 
 import android.os.Bundle;
+
+import com.greg.qrdb.R;
 
 /**
  * Created by Greg on 24-10-2016.
  */
-public class CreateNewQrCodeActivity extends BaseActivity {
+public class AboutActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_qr_code);
+        setContentView(R.layout.activity_about);
         initBaseActivity();
     }
 }

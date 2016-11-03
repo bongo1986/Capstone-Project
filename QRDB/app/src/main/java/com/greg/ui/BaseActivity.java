@@ -1,4 +1,4 @@
-package com.greg.qrdb;
+package com.greg.ui;
 
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
@@ -8,6 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.greg.ui.CreateNewQrCodeActivity;
+import com.greg.ui.MyQrCodesActivity;
+import com.greg.qrdb.R;
+import com.greg.ui.AboutActivity;
+import com.greg.ui.ScanActivity;
+import com.greg.ui.ScannedQrCodesActivity;
 
 /**
  * Created by Greg on 23-10-2016.

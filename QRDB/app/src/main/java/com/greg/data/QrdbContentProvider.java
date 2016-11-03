@@ -95,16 +95,7 @@ public class QrdbContentProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(Uri uri) {
-        final int match = sUriMatcher.match(uri);
-
-        switch (match) {
-            case CODES:
-                return QrdbContract.CodeEntry.CONTENT_TYPE;
-            case CODES_BY_ID:
-                return  QrdbContract.CodeEntry.CONTENT_ITEM_TYPE ;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
-        }
+       return null;
     }
 
     @Nullable

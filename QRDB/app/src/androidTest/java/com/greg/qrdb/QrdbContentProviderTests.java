@@ -1,13 +1,21 @@
 package com.greg.qrdb;
 
 import android.content.ComponentName;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.greg.data.QrdbContentProvider;
 import com.greg.data.QrdbContract;
+import com.greg.data.QrdbDbHelper;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Greg on 27-10-2016.
@@ -28,7 +36,7 @@ public class QrdbContentProviderTests extends AndroidTestCase {
                 null
         );
 
-        assertEquals("Error: Records not deleted from Favorite Movies table during delete", 0, cursor.getCount());
+        assertEquals("Error: Records not deleted from Code table during delete", 0, cursor.getCount());
         cursor.close();
 
     }
@@ -61,14 +69,118 @@ public class QrdbContentProviderTests extends AndroidTestCase {
         }
     }
 
-    public void testGetType() {
-        // content://com.example.greg.popularmovies/favoritemovie/
-        String type = mContext.getContentResolver().getType(QrdbContract.CodeEntry.CONTENT_URI);
-        //String type2 = mContext.getContentResolver().getType(PopularMoviesContract.MovieEntry.CONTENT_ITEM);
+    public void testBasicCodeQuery() {
 
 
-        assertEquals("Error: the Movie CONTENT_URI should return Movie.CONTENT_TYPE",
-                QrdbContract.CodeEntry.CONTENT_TYPE, type);
+        QrdbDbHelper dbHelper = new QrdbDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues testValues = TestUtilities.createCodeValues(0);
+
+        long rowId = db.insert(QrdbContract.CodeEntry.TABLE_NAME, null, testValues);
+
+        assertTrue("Unable to Insert code into the Database", rowId  != -1);
+
+        db.close();
+
+        // Test the basic content provider query
+        Cursor cursor = mContext.getContentResolver().query(
+                QrdbContract.CodeEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        // Make sure we get the correct cursor out of the database
+        validateCursor("testBasicCodeQuery", cursor, testValues);
+    }
+    public void testCodeByIdQuery() {
+        // insert our test records into the database
+        QrdbDbHelper dbHelper = new QrdbDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues testValues = TestUtilities.createCodeValues(1);
+
+        long rowId = db.insert(QrdbContract.CodeEntry.TABLE_NAME, null, testValues);
+
+        assertTrue("Unable to Insert PopularMovie into the Database", rowId  != -1);
+
+        db.close();
+
+        // Test the basic content provider query
+        Cursor cursor = mContext.getContentResolver().query(
+                QrdbContract.CodeEntry.CONTENT_URI,
+                null,
+                QrdbContract.CodeEntry._ID + " = ?" ,
+                new String[]{ "3"},
+                null
+        );
+        // Test the basic content provider query
+        Cursor cursor2 = mContext.getContentResolver().query(
+                QrdbContract.CodeEntry.CONTENT_URI,
+                null,
+                QrdbContract.CodeEntry._ID + " = ?" ,
+                new String[]{ "1"},
+                null
+        );
+        int count = cursor.getCount();
+
+        assertTrue("Unable to Insert Code into the Database", count  == 0);
+        validateCursor("testCodeByIdQuery", cursor2, testValues);
     }
 
+    public void testInsert() {
+
+        // insert our test records into the database
+        ContentValues testValues = TestUtilities.createCodeValues(1);
+        Uri insertedUri = mContext.getContentResolver().insert( QrdbContract.CodeEntry.CONTENT_URI,testValues);
+        long rowId = ContentUris.parseId(insertedUri);
+        assertTrue("Unable to Insert PopularMovie into the Database", rowId  != -1);
+
+    }
+
+    public void testDelete() {
+
+        // insert our test records into the database
+        ContentValues testValues = TestUtilities.createCodeValues(1);
+        Uri insertedUri = mContext.getContentResolver().insert( QrdbContract.CodeEntry.CONTENT_URI,testValues);
+        long rowId = ContentUris.parseId(insertedUri);
+        assertTrue("Unable to Insert PopularMovie into the Database", rowId  != -1);
+
+        mContext.getContentResolver().delete(
+                QrdbContract.CodeEntry.CONTENT_URI,
+                QrdbContract.CodeEntry._ID + " = ?" ,
+                new String[] { Long.toString(rowId)});
+
+        Cursor cursor = mContext.getContentResolver().query(
+                QrdbContract.CodeEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+
+        assertEquals("Error: Records not deleted from Code table during delete", 0, cursor.getCount());
+        cursor.close();
+
+    }
+
+
+    static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
+        assertTrue("Empty cursor returned. " + error, valueCursor.moveToFirst());
+        validateCurrentRecord(error, valueCursor, expectedValues);
+        valueCursor.close();
+    }
+    static void validateCurrentRecord(String error, Cursor valueCursor, ContentValues expectedValues) {
+        Set<Map.Entry<String, Object>> valueSet = expectedValues.valueSet();
+        for (Map.Entry<String, Object> entry : valueSet) {
+            String columnName = entry.getKey();
+            int idx = valueCursor.getColumnIndex(columnName);
+            assertFalse("Column '" + columnName + "' not found. " + error, idx == -1);
+            String expectedValue = entry.getValue().toString();
+            assertEquals("Value '" + entry.getValue().toString() +
+                    "' did not match the expected value '" +
+                    expectedValue + "'. " + error, expectedValue.toString(), valueCursor.getString(idx));
+        }
+    }
 }

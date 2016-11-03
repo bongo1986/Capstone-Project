@@ -1,4 +1,4 @@
-package com.greg.qrdb;
+package com.greg.ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -23,8 +23,12 @@ import com.google.zxing.Result;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.greg.dagger.IdummyClass;
+import com.greg.qrdb.R;
 
 import java.util.UUID;
+
+import javax.inject.Inject;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -32,10 +36,13 @@ public class MainActivity extends AppCompatActivity  {
 
     private ZXingScannerView mScannerView;
 
+    @Inject
+    IdummyClass mDummyClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mDummyClass.doWork();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
