@@ -1,5 +1,7 @@
-package com.greg.dagger;
+package com.greg.di;
 
+import com.greg.di.AppModule;
+import com.greg.ui.CreateNewQrCodeActivity;
 import com.greg.ui.MainActivity;
 import com.greg.ui.MyQrCodesActivity;
 
@@ -19,6 +21,7 @@ import dagger.Component;
 public interface AppComponent {
     void inject(MainActivity activity);
     void inject(MyQrCodesActivity activity);
+    void inject(CreateNewQrCodeActivity activity);
 }
 
 

@@ -95,6 +95,7 @@ public class ScanActivity extends BaseActivity implements ZXingScannerView.Resul
                     bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
                 }
             }
+
             ((ImageView) findViewById(R.id.img_result_qr)).setImageBitmap(bmp);
 
         } catch (WriterException e) {

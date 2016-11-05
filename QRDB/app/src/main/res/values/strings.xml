@@ -12,5 +12,8 @@
     <string name="qr_title_hint">Insert title</string>
     <string name="qr_description_hint">Insert Description</string>
     <string name="btn_create_qr_code">Create QR code</string>
+    <string name="wait_dialog_message">Please wait...</string>
+    <string name="empty_field_error_message">This field can not be empty</string>
+    <string name="text_too_long_message">Max %d characters</string>
     btn_create_qr_code
 </resources>

@@ -1,10 +1,14 @@
-package com.greg.dagger;
+package com.greg.di;
 
 import android.content.Context;
 
 import com.greg.QrdbApplication;
+import com.greg.domain.QrCodeService;
+import com.greg.domain.QrCodeServiceImpl;
 import com.greg.presentation.MyQrCodesPresenter;
-import com.greg.presentation.MyQrCodesPresenterImpl;
+import com.greg.utils.StringRetreiver;
+import com.greg.utils.StringRetreiverImpl;
+
 
 import javax.inject.Singleton;
 
@@ -28,17 +32,16 @@ public class AppModule {
 
         return app;
     }
-
     @Provides
-    @Singleton
-    public IdummyClass provideDummyClass() {
-        return new dummyClass();
+    public StringRetreiver provideStringRetreiver(Context c) {
+        return new StringRetreiverImpl(c);
     }
 
     @Provides
-    @Singleton
-    public MyQrCodesPresenter provideMyQrCodesPresenter(IdummyClass dummy) {
-        return new MyQrCodesPresenterImpl(dummy);
+    public QrCodeService provideQrcodeService(Context c) {
+        return new QrCodeServiceImpl(c);
     }
+
+
 
 }

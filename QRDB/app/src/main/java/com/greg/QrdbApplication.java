@@ -3,9 +3,10 @@ package com.greg;
 import android.app.Application;
 import android.content.Context;
 
-import com.greg.dagger.AppComponent;
-import com.greg.dagger.AppModule;
-import com.greg.dagger.DaggerAppComponent;
+import com.greg.di.AppComponent;
+import com.greg.di.AppModule;
+import com.greg.di.DaggerAppComponent;
+//import com.greg.di.DaggerAppComponent;
 
 /**
  * Created by Greg on 31-10-2016.
@@ -33,5 +34,6 @@ public class QrdbApplication extends Application {
                     .build();
         }
         return appComponent;
+        //return null;
     }
 }

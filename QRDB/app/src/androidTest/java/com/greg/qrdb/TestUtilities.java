@@ -17,14 +17,14 @@ public class TestUtilities {
 
         UUID uuid = UUID.randomUUID();
 
-        ContentValues movieValues = new ContentValues();
-        movieValues.put(QrdbContract.CodeEntry.COLUMN_DESCRIPTION, "Test description" + Integer.toString(index));
-        movieValues.put(QrdbContract.CodeEntry.COLUMN_TITLE, "Test title" + Integer.toString(index));
-        movieValues.put(QrdbContract.CodeEntry.COLUMN_QR_GUID, uuid.toString());
-        movieValues.put(QrdbContract.CodeEntry.COLUMN_SCAN_COUNT, 0);
+        ContentValues values = new ContentValues();
+        values.put(QrdbContract.CodeEntry.COLUMN_DESCRIPTION, "Test description" + Integer.toString(index));
+        values.put(QrdbContract.CodeEntry.COLUMN_TITLE, "Test title" + Integer.toString(index));
+        values.put(QrdbContract.CodeEntry.COLUMN_QR_GUID, uuid.toString());
+        values.put(QrdbContract.CodeEntry.COLUMN_SCAN_COUNT, 0);
        // movieValues.put(QrdbContract.CodeEntry.COLUMN_QR_CODE_IMAGE_DATA, (byte[])null);
 
-        return movieValues;
+        return values;
     }
 
 }

@@ -9,6 +9,12 @@
     android:paddingRight="20dp"
     android:paddingTop="60dp">
 
+    <ImageView
+        android:id="@+id/qr_code_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+
     <android.support.design.widget.TextInputLayout
         android:id="@+id/input_layout_qr_code_title"
         android:layout_width="match_parent"

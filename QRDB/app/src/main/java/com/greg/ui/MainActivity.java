@@ -23,7 +23,6 @@ import com.google.zxing.Result;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.greg.dagger.IdummyClass;
 import com.greg.qrdb.R;
 
 import java.util.UUID;
@@ -36,13 +35,11 @@ public class MainActivity extends AppCompatActivity  {
 
     private ZXingScannerView mScannerView;
 
-    @Inject
-    IdummyClass mDummyClass;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDummyClass.doWork();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
