@@ -5,7 +5,6 @@ import android.content.Context;
 import com.greg.QrdbApplication;
 import com.greg.domain.QrCodeService;
 import com.greg.domain.QrCodeServiceImpl;
-import com.greg.presentation.MyQrCodesPresenter;
 import com.greg.utils.StringRetreiver;
 import com.greg.utils.StringRetreiverImpl;
 
@@ -29,7 +28,6 @@ public class AppModule {
     @Provides
     @Singleton
     public Context provideContext() {
-
         return app;
     }
     @Provides

@@ -1,9 +1,10 @@
 package com.greg.di;
 
 import com.greg.di.AppModule;
-import com.greg.ui.CreateNewQrCodeActivity;
+import com.greg.ui.CRUDQrCodeActivity;
 import com.greg.ui.MainActivity;
-import com.greg.ui.MyQrCodesActivity;
+import com.greg.ui.QrCodeListActivity;
+import com.greg.ui.QrGridFragment;
 
 import javax.inject.Singleton;
 
@@ -20,8 +21,9 @@ import dagger.Component;
 )
 public interface AppComponent {
     void inject(MainActivity activity);
-    void inject(MyQrCodesActivity activity);
-    void inject(CreateNewQrCodeActivity activity);
+    void inject(QrGridFragment fragment);
+    void inject(CRUDQrCodeActivity activity);
+    void inject(QrCodeListActivity activity);
 }
 
 

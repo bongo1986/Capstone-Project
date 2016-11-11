@@ -3,7 +3,7 @@
     package="com.greg.qrdb">
 
     <uses-permission android:name="android.permission.CAMERA" />
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
         android:name="com.greg.QrdbApplication"
         android:allowBackup="true"
@@ -17,7 +17,17 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name="com.greg.ui.CreateNewQrCodeActivity"
+            android:name="com.greg.ui.QrCodeListActivity"
+            android:label="@string/my_qr_codes"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.greg.ui.CRUDQrCodeActivity"
             android:label="@string/create_qr_code_menu_item"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
@@ -37,16 +47,6 @@
             android:label="@string/about_menu_item"
             android:theme="@style/AppTheme.NoActionBar">
 
-        </activity>
-        <activity
-            android:name="com.greg.ui.MyQrCodesActivity"
-            android:label="@string/my_qr_codes"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <provider
             android:authorities="com.greg.qrdb"

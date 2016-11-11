@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
 import com.google.zxing.BarcodeFormat;
@@ -33,7 +34,7 @@ public class QrCodeServiceImpl implements QrCodeService {
     public QrCodeServiceImpl(Context c){
         mContext = c;
     }
-    public Observable<Long> InsertQRcode(QrCode code){
+    public Observable<Long> InsertQRcode(QrCode code, boolean isScanned){
         Observable<Long> myObservable = Observable.create(
                 new Observable.OnSubscribe<Long>() {
                     @Override
@@ -45,6 +46,7 @@ public class QrCodeServiceImpl implements QrCodeService {
                         values.put(QrdbContract.CodeEntry.COLUMN_TITLE, code.getmTitle());
                         values.put(QrdbContract.CodeEntry.COLUMN_QR_GUID, code.getmUuid().toString());
                         values.put(QrdbContract.CodeEntry.COLUMN_SCAN_COUNT, 0);
+                        values.put(QrdbContract.CodeEntry.COLUMN_IS_SCANNED, isScanned == true ? 1 : 0);
                         values.put(QrdbContract.CodeEntry.COLUMN_QR_CODE_IMAGE_DATA, code.getQrBitmapData());
                         Uri insertedUri = mContext.getContentResolver().insert( QrdbContract.CodeEntry.CONTENT_URI,values);
                         long rowId = ContentUris.parseId(insertedUri);
@@ -58,13 +60,65 @@ public class QrCodeServiceImpl implements QrCodeService {
     }
 
     @Override
+    public Observable<Integer> DeleteQrCode(UUID uuid) {
+        Observable<Integer> myObservable = Observable.create(
+                new Observable.OnSubscribe<Integer>() {
+                    @Override
+                    public void call(Subscriber<? super Integer> sub) {
+                        int rowsDeleted = mContext.getContentResolver().delete(
+                                QrdbContract.CodeEntry.CONTENT_URI,
+                                QrdbContract.CodeEntry.COLUMN_QR_GUID + " = ?" ,
+                                new String[] { uuid.toString()});
+
+                        sub.onNext(rowsDeleted);
+                        sub.onCompleted();
+                    }
+                }
+        );
+        return myObservable;
+    }
+
+    @Override
+    public Observable<Integer> UpdateQrCode(QrCode code) {
+        Observable<Integer> myObservable = Observable.create(
+                new Observable.OnSubscribe<Integer>() {
+                    @Override
+                    public void call(Subscriber<? super Integer> sub) {
+
+                        ContentValues values = new ContentValues();
+                        values.put(QrdbContract.CodeEntry.COLUMN_DESCRIPTION, code.getmDescription());
+                        values.put(QrdbContract.CodeEntry.COLUMN_TITLE, code.getmTitle());
+
+
+                        int rowsUpdated = mContext.getContentResolver().update(
+                                QrdbContract.CodeEntry.CONTENT_URI,
+                                values,
+                                QrdbContract.CodeEntry.COLUMN_QR_GUID + " = ?" ,
+                                new String[] { code.getmUuid().toString()});
+
+                        sub.onNext(rowsUpdated);
+                        sub.onCompleted();
+                    }
+                }
+        );
+        return myObservable;
+    }
+
+    @Override
+    public QrBitmap GetQrBitmapForUuid(UUID uuid) {
+        return getQrBitmapForUuid(uuid);
+    }
+
+    @Override
     public QrBitmap GenerateNewQrCode() {
         UUID uuid = UUID.randomUUID();
-        String str = UUID.randomUUID().toString();
+        return getQrBitmapForUuid(uuid);
+    }
+    private QrBitmap getQrBitmapForUuid(UUID uuid) {
         QRCodeWriter writer = new QRCodeWriter();
         QrBitmap result = null;
         try {
-            BitMatrix bitMatrix = writer.encode(str, BarcodeFormat.QR_CODE, 512, 512);
+            BitMatrix bitMatrix = writer.encode(uuid.toString(), BarcodeFormat.QR_CODE, 512, 512);
             int width = bitMatrix.getWidth();
             int height = bitMatrix.getHeight();
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
@@ -81,6 +135,4 @@ public class QrCodeServiceImpl implements QrCodeService {
 
         return result;
     }
-
-
 }

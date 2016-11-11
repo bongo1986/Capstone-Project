@@ -39,6 +39,7 @@ public class QrdbContract {
         public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_QR_GUID = "qr_guid";
         public static final String COLUMN_SCAN_COUNT = "scan_count";
+        public static final String COLUMN_IS_SCANNED = "is_scanned";
         public static final String COLUMN_QR_CODE_IMAGE_DATA = "qr_code_image_data";
     }
 

@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class QrdbDbHelper extends SQLiteOpenHelper {
 
-    private static final  int DATABASE_VERSION = 4;
+    private static final  int DATABASE_VERSION = 5;
     public static String DATABASE_NAME = "qrdb_database.db";
 
     public QrdbDbHelper(Context context){
@@ -24,6 +24,7 @@ public class QrdbDbHelper extends SQLiteOpenHelper {
                 QrdbContract.CodeEntry.COLUMN_DESCRIPTION + " TEXT  NOT NULL, " +
                 QrdbContract.CodeEntry.COLUMN_QR_GUID + " TEXT  NOT NULL, " +
                 QrdbContract.CodeEntry.COLUMN_SCAN_COUNT + " INTEGER," +
+                QrdbContract.CodeEntry.COLUMN_IS_SCANNED + " INTEGER," +
                 QrdbContract.CodeEntry.COLUMN_QR_CODE_IMAGE_DATA + " BLOB " +
                 " );";
         db.execSQL(SQL_CREATE_MOVIE_TABLE);

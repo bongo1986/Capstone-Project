@@ -12,8 +12,7 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        tools:context="com.learn2crack.myapplication.MainActivity">
+        android:fitsSystemWindows="true">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -29,7 +28,7 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <include layout="@layout/content_create_qr_code" />
+        <include layout="@layout/content_crud_qr_code" />
 
     </android.support.design.widget.CoordinatorLayout>
 

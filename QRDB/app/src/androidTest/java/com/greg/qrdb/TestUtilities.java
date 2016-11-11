@@ -22,6 +22,7 @@ public class TestUtilities {
         values.put(QrdbContract.CodeEntry.COLUMN_TITLE, "Test title" + Integer.toString(index));
         values.put(QrdbContract.CodeEntry.COLUMN_QR_GUID, uuid.toString());
         values.put(QrdbContract.CodeEntry.COLUMN_SCAN_COUNT, 0);
+        values.put(QrdbContract.CodeEntry.COLUMN_IS_SCANNED, 0);
        // movieValues.put(QrdbContract.CodeEntry.COLUMN_QR_CODE_IMAGE_DATA, (byte[])null);
 
         return values;

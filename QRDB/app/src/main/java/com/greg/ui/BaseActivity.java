@@ -2,15 +2,15 @@ package com.greg.ui;
 
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-
-import com.greg.ui.CreateNewQrCodeActivity;
-import com.greg.ui.MyQrCodesActivity;
+import android.widget.TextView;
 import com.greg.qrdb.R;
 import com.greg.ui.AboutActivity;
 import com.greg.ui.ScanActivity;
@@ -29,7 +29,13 @@ public class BaseActivity  extends AppCompatActivity {
         setSupportActionBar(toolbar);
         initNavigationDrawer();
     }
-
+    public void showSnackBar(View c, String errorText) {
+        Snackbar snackbar = Snackbar.make(c, errorText, Snackbar.LENGTH_LONG);
+        snackbar.show();
+        View view = snackbar.getView();
+        TextView txtv = (TextView) view.findViewById(android.support.design.R.id.snackbar_text);
+        txtv.setGravity(Gravity.CENTER_HORIZONTAL);
+    }
     public void initNavigationDrawer() {
 
         NavigationView navigationView = (NavigationView)findViewById(R.id.navigation_view);
@@ -48,13 +54,13 @@ public class BaseActivity  extends AppCompatActivity {
                        break;
                     case R.id.create_qr_code:
                         drawerLayout.closeDrawers();
-                        Intent goToCreateNewQrCodeActivity = new Intent(getApplicationContext(), CreateNewQrCodeActivity.class);
+                        Intent goToCreateNewQrCodeActivity = new Intent(getApplicationContext(), CRUDQrCodeActivity.class);
                         startActivity(goToCreateNewQrCodeActivity);
                         finish();
                         break;
                     case R.id.my_qr_codes:
                         drawerLayout.closeDrawers();
-                        Intent goToMyQrCodesActivity = new Intent(getApplicationContext(), MyQrCodesActivity.class);
+                        Intent goToMyQrCodesActivity = new Intent(getApplicationContext(), QrCodeListActivity.class);
                         startActivity(goToMyQrCodesActivity);
                         finish();
                         break;

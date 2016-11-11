@@ -47,6 +47,13 @@ public class QrdbContentProviderTests extends AndroidTestCase {
         super.setUp();
         deleteAllRecords();
     }
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        deleteAllRecords();
+
+    }
+
 
     public void testProviderRegistry() {
         PackageManager pm = mContext.getPackageManager();
@@ -136,6 +143,30 @@ public class QrdbContentProviderTests extends AndroidTestCase {
         Uri insertedUri = mContext.getContentResolver().insert( QrdbContract.CodeEntry.CONTENT_URI,testValues);
         long rowId = ContentUris.parseId(insertedUri);
         assertTrue("Unable to Insert PopularMovie into the Database", rowId  != -1);
+
+    }
+
+    public void testUpdate() {
+
+        // insert our test records into the database
+        ContentValues testValues = TestUtilities.createCodeValues(1);
+        Uri insertedUri = mContext.getContentResolver().insert( QrdbContract.CodeEntry.CONTENT_URI,testValues);
+
+
+        long rowId = ContentUris.parseId(insertedUri);
+
+        ContentValues values = new ContentValues();
+
+        values.put(QrdbContract.CodeEntry.COLUMN_DESCRIPTION, "Test description updated");
+        values.put(QrdbContract.CodeEntry.COLUMN_TITLE, "Test title updated");
+
+
+        int updated_count  = mContext.getContentResolver().update(QrdbContract.CodeEntry.CONTENT_URI,values, QrdbContract.CodeEntry._ID + " = ?" ,new String[] { String.valueOf(rowId)});
+
+
+        assertTrue("Unable to Insert PopularMovie into the Database", rowId  != -1);
+
+        assertEquals("Error: Records not updated", 1, updated_count);
 
     }
 
