@@ -19,5 +19,5 @@ public interface CRUDQrCodeView extends  WaitDialogView  {
     void setActivityTitle(String title);
     void loadModel(QrCode qrCode);
     void showConfirmDeleteDialog(String title, String msg);
-    void showErrorMessageSnackBar(String errorText);
+    void showMessageSnackBar(String errorText);
 }

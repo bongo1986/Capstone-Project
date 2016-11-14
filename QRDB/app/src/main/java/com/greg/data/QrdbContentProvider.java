@@ -95,7 +95,7 @@ public class QrdbContentProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(Uri uri) {
-       return null;
+        return null;
     }
 
     @Nullable

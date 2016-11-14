@@ -29,33 +29,33 @@ public class QrCodesAdapter  extends RecyclerView.Adapter<QrCodesAdapter.ViewHol
         public ImageView mQrImage;
         public CardView mCardView;
 
-        private QrCodeSelectedListener mQrCodeSelectedListener;
+        private QrCodeGridListener mQrCodeGridListener;
         //public QrCode mQrCode;
 
-        public ViewHolder(View v, QrCodeSelectedListener qrCodeSelectedListener) {
+        public ViewHolder(View v, QrCodeGridListener qrCodeGridListener) {
             super(v);
             //mQrCode = qrCode;
             mTitleTextView = (TextView) v.findViewById(R.id.qr_code_title);
             mQrImage =(ImageView) v.findViewById(R.id.qr_code_img);
             mCardView = (CardView) v.findViewById(R.id.qr_code_card);
-            mQrCodeSelectedListener = qrCodeSelectedListener;
+            mQrCodeGridListener = qrCodeGridListener;
 
             mCardView.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     QrCode clickedCode = (QrCode) v.getTag();
-                    mQrCodeSelectedListener.QrCodeSelected(clickedCode, mQrImage);
+                    mQrCodeGridListener.QrCodeSelected(clickedCode, mQrImage);
                 }
             });
         }
     }
     Cursor mCursor;
     Context mContext;
-    QrCodeSelectedListener mQrCodeSelectedListener;
+    QrCodeGridListener mQrCodeGridListener;
 
-    public QrCodesAdapter(Context context, Cursor c, QrCodeSelectedListener qrCodeSelectedListener){
+    public QrCodesAdapter(Context context, Cursor c, QrCodeGridListener qrCodeGridListener){
         mCursor = c;
         mContext = context;
-        mQrCodeSelectedListener = qrCodeSelectedListener;
+        mQrCodeGridListener = qrCodeGridListener;
     }
 
 
@@ -64,7 +64,7 @@ public class QrCodesAdapter  extends RecyclerView.Adapter<QrCodesAdapter.ViewHol
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_qr_code, parent, false);
 
-        ViewHolder vh = new ViewHolder(v, mQrCodeSelectedListener);
+        ViewHolder vh = new ViewHolder(v, mQrCodeGridListener);
         return vh;
     }
 

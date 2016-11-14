@@ -1,11 +1,11 @@
 package com.greg.presentation;
 
-import com.google.zxing.common.StringUtils;
 import com.greg.domain.QrBitmap;
 import com.greg.domain.QrCode;
 import com.greg.domain.QrCodeService;
 import com.greg.qrdb.R;
 import com.greg.utils.StringRetreiver;
+import com.greg.utils.ThreadProvider;
 
 import javax.inject.Inject;
 
@@ -17,13 +17,15 @@ public class CRUDQrCodePresenter implements BasePresenter<CRUDQrCodeView>{
     private QrCodeService mQrCodeService;
     private CRUDQrCodeView mCRUDQrCodeView;
     private StringRetreiver mStringRetreiver;
+    private ThreadProvider mThreadProvider;
     @Inject
-    public CRUDQrCodePresenter(QrCodeService qrSrv, StringRetreiver stringRetreiver) {
+    public CRUDQrCodePresenter(QrCodeService qrSrv, StringRetreiver stringRetreiver, ThreadProvider threadProvider) {
         mQrCodeService = qrSrv;
         mStringRetreiver = stringRetreiver;
+        mThreadProvider = threadProvider;
     }
 
-    public void init(QrCode qrCode){
+    public QrCode init(QrCode qrCode){
         if(qrCode == null){
             QrBitmap qrBitap = mQrCodeService.GenerateNewQrCode();
             qrCode = new QrCode("", "", qrBitap.getmUUID(), qrBitap.getBitmapBytes(), true);
@@ -45,6 +47,8 @@ public class CRUDQrCodePresenter implements BasePresenter<CRUDQrCodeView>{
             }
             mCRUDQrCodeView.loadModel(qrCode);
         }
+
+        return qrCode;
     }
 
     @Override
@@ -68,18 +72,20 @@ public class CRUDQrCodePresenter implements BasePresenter<CRUDQrCodeView>{
         boolean errorFound = validateUserInput(qr);
         if(errorFound == false) {
             mCRUDQrCodeView.showWaitDialog();
-            mQrCodeService.InsertQRcode(qr, false).subscribe(id -> {
+            mQrCodeService.InsertQRcode(qr, false)
+                    .subscribeOn(mThreadProvider.newThread())
+                    .observeOn(mThreadProvider.mainThread()).subscribe(id -> {
                 if (mCRUDQrCodeView != null) {
                     mCRUDQrCodeView.hideWaitDialog();
                     if (id != -1) {
                         mCRUDQrCodeView.redirectToMyQrCodesAfterCreate();
                     } else {
-                        mCRUDQrCodeView.showErrorMessageSnackBar(mStringRetreiver.getString(R.string.text_qr_code_not_saved));
+                        mCRUDQrCodeView.showMessageSnackBar(mStringRetreiver.getString(R.string.text_qr_code_not_saved));
                     }
                 }
             }, e -> {
                 mCRUDQrCodeView.hideWaitDialog();
-                mCRUDQrCodeView.showErrorMessageSnackBar(mStringRetreiver.getString(R.string.text_qr_code_not_saved));
+                mCRUDQrCodeView.showMessageSnackBar(mStringRetreiver.getString(R.string.text_qr_code_not_saved));
             });
         }
     }
@@ -87,18 +93,20 @@ public class CRUDQrCodePresenter implements BasePresenter<CRUDQrCodeView>{
         boolean errorFound = validateUserInput(qr);
         if(errorFound == false) {
             mCRUDQrCodeView.showWaitDialog();
-            mQrCodeService.UpdateQrCode(qr).subscribe(count -> {
+            mQrCodeService.UpdateQrCode(qr)
+                    .subscribeOn(mThreadProvider.newThread())
+                    .observeOn(mThreadProvider.mainThread()).subscribe(count -> {
                 if (mCRUDQrCodeView != null) {
                     mCRUDQrCodeView.hideWaitDialog();
                     if (count == 1) {
                         mCRUDQrCodeView.redirectToMyQrCodesAfterUpdate();
                     } else {
-                        mCRUDQrCodeView.showErrorMessageSnackBar(mStringRetreiver.getString(R.string.text_qr_code_not_saved));
+                        mCRUDQrCodeView.showMessageSnackBar(mStringRetreiver.getString(R.string.text_qr_code_not_saved));
                     }
                 }
             }, e -> {
                 mCRUDQrCodeView.hideWaitDialog();
-                mCRUDQrCodeView.showErrorMessageSnackBar(mStringRetreiver.getString(R.string.text_qr_code_not_saved));
+                mCRUDQrCodeView.showMessageSnackBar(mStringRetreiver.getString(R.string.text_qr_code_not_saved));
             });
         }
     }
@@ -107,18 +115,21 @@ public class CRUDQrCodePresenter implements BasePresenter<CRUDQrCodeView>{
     }
     public void DeleteConfirmed(QrCode qr){
         mCRUDQrCodeView.showWaitDialog();
-        mQrCodeService.DeleteQrCode(qr.getmUuid()).subscribe(count -> {
+        mQrCodeService.DeleteQrCode(qr.getmUuid())
+                .subscribeOn(mThreadProvider.newThread())
+                .observeOn(mThreadProvider.mainThread())
+                .subscribe(count -> {
             if (mCRUDQrCodeView != null) {
                 mCRUDQrCodeView.hideWaitDialog();
                 if (count == 1) {
                     mCRUDQrCodeView.redirectToMyQrCodesAfterDelete();
                 } else {
-                    mCRUDQrCodeView.showErrorMessageSnackBar(mStringRetreiver.getString(R.string.text_qr_code_not_deleted));
+                    mCRUDQrCodeView.showMessageSnackBar(mStringRetreiver.getString(R.string.text_qr_code_not_deleted));
                 }
             }
         }, e -> {
             mCRUDQrCodeView.hideWaitDialog();
-            mCRUDQrCodeView.showErrorMessageSnackBar(mStringRetreiver.getString(R.string.text_qr_code_not_deleted));
+            mCRUDQrCodeView.showMessageSnackBar(mStringRetreiver.getString(R.string.text_qr_code_not_deleted));
         });
     }
 
@@ -126,7 +137,7 @@ public class CRUDQrCodePresenter implements BasePresenter<CRUDQrCodeView>{
     private boolean validateUserInput(QrCode qr) {
         boolean errorFound = false;
 
-        if(qr.getmTitle() == null || qr.getmTitle().equals("")){
+        if(qr.getmTitle() == null || qr.getmTitle().trim().equals("")){
             mCRUDQrCodeView.showTitleError(mStringRetreiver.getString(R.string.empty_field_error_message));
             errorFound = true;
         }
@@ -134,7 +145,7 @@ public class CRUDQrCodePresenter implements BasePresenter<CRUDQrCodeView>{
             mCRUDQrCodeView.showTitleError(String.format(mStringRetreiver.getString(R.string.text_too_long_message), 30));
             errorFound = true;
         }
-        if(qr.getmDescription() == null || qr.getmDescription().equals("")){
+        if(qr.getmDescription() == null || qr.getmDescription().trim().equals("")){
             mCRUDQrCodeView.showDescriptionError(mStringRetreiver.getString(R.string.empty_field_error_message));
             errorFound = true;
         }

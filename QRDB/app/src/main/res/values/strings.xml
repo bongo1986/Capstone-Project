@@ -6,7 +6,7 @@
     <string name="drawer_close">Close</string>
     <!--Menu items-->
     <string name="scan_qr_code_menu_item">Scan</string>
-    <string name="scanned_qr_codes_menu_item">Scanned QR codes</string>
+    <string name="scanned_qr_codes_menu_item">Scanned codes</string>
     <string name="create_qr_code_menu_item">Create new QR code</string>
     <string name="about_menu_item">About</string>
     <string name="qr_title_hint">Title</string>
@@ -25,5 +25,18 @@
     <string name="text_qr_code_delete_dialog_title">Delete QR code</string>
     <string name="text_confirm_delete_qr_code">Are you sure you want to delete QR code titled %s?</string>
     <string name="text_scanned_code">Scanned QR code</string>
+    <string name="text_no_qr_codes">No QR codes available</string>
+    <string name="text_no_qr_code_selected">No QR code selected</string>
+    <string name="no_permission_to_write">Can not share QR code. Permission to write to the external storage not granted. </string>
     <string name="image_trans">qr_code_transition</string>
+    <string name="text_code_not_found">Qr code has not been found</string>
+    <string name="text_new_qr_code_saved">New QR code has been saved</string>
+    <string name="text_existing_qr">QR code has been already scanned</string>
+
+    <string name="content_description_title_input">Title input</string>
+    <string name="content_description_description_input">Description input</string>
+    <string name="content_description_delete">Delete</string>
+    <string name="content_description_update">Update</string>
+    <string name="content_description_save">Save</string>
+    <string name="content_description_add_qr_code">Add QR code</string>
 </resources>

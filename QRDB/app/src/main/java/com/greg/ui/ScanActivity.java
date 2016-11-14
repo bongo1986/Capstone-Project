@@ -1,33 +1,45 @@
 package com.greg.ui;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
+import com.greg.QrdbApplication;
+import com.greg.domain.QrCode;
+import com.greg.presentation.ScanPresenter;
+import com.greg.presentation.ScanView;
 import com.greg.qrdb.R;
 
-import java.util.UUID;
+import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 /**
  * Created by Greg on 24-10-2016.
  */
-public class ScanActivity extends BaseActivity implements ZXingScannerView.ResultHandler {
+public class ScanActivity extends BaseActivity implements ZXingScannerView.ResultHandler, ScanView {
 
-    private ZXingScannerView mScannerView;
+
+    private boolean savingQrCode;
+    private boolean showingSnackBar;
+    @BindView(R.id.scanContainer)
+    CoordinatorLayout mScanContainer;
+    @Inject
+    ScanPresenter mScanPresenter;
+    private ZXingScannerView mZXingScanner;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,75 +47,79 @@ public class ScanActivity extends BaseActivity implements ZXingScannerView.Resul
         setContentView(R.layout.activity_scan_qr_codes);
         initBaseActivity();
 
+        QrdbApplication.getInstance().getAppComponent().inject(this);
+        mScanPresenter.setView(this);
+        ButterKnife.bind(this);
+
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
-        mScannerView = new ZXingScannerView(this);
-        contentFrame.addView(mScannerView);
+        mZXingScanner = new ZXingScannerView(this);
+        contentFrame.addView(mZXingScanner);
 
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_crud, menu);
-        return true;
-    }
 
 
 
     @Override
     public void onResume() {
         super.onResume();
-        mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
-        mScannerView.startCamera();
-        try {
-            encodeAsBitmap(UUID.randomUUID().toString());
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
+        mZXingScanner.setResultHandler(this); // Register ourselves as a handler for scan results.
+        mZXingScanner.startCamera();
+
         // Start camera on resume
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mScannerView.stopCamera();           // Stop camera on pause
+        mZXingScanner.stopCamera();
     }
 
-    private void encodeAsBitmap(String str) throws WriterException {
-        QRCodeWriter writer = new QRCodeWriter();
-        try {
-            BitMatrix bitMatrix = writer.encode(str, BarcodeFormat.QR_CODE, 512, 512);
-            int width = bitMatrix.getWidth();
-            int height = bitMatrix.getHeight();
-            Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
-                }
-            }
 
-            ((ImageView) findViewById(R.id.img_result_qr)).setImageBitmap(bmp);
-
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
-    }
     @Override
     public void handleResult(Result rawResult) {
 
-
+        /*
         Context context = getApplicationContext();
         CharSequence text = "Hello toast!";
         int duration = Toast.LENGTH_SHORT;
 
-        Toast toast = Toast.makeText(context, "Scanned successfully: " + rawResult.getText(), duration);
+        /*Toast toast = Toast.makeText(context, "Scanned successfully: " + rawResult.getText(), duration);
         toast.show();
 
         Log.v("QR", rawResult.getText()); // Prints scan results
         Log.v("QR", rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
-
+        */
         // If you would like to resume scanning, call this method below:
-        mScannerView.resumeCameraPreview(this);
+        if(savingQrCode == false) {
+            savingQrCode = true;
+            mScanPresenter.qrCodeScanned(rawResult.getText());
+        }
+        mZXingScanner.resumeCameraPreview(this);
+    }
+
+    @Override
+    public void ShowErrorMessage(String message) {
+        savingQrCode = false;
+        if(showingSnackBar == false) {
+            mScanContainer.postDelayed(new Runnable() {
+                public void run() {
+                    showingSnackBar = false;
+                }
+            }, 3000);
+            showingSnackBar = true;
+            showSnackBar(mScanContainer, message);
+        }
+    }
+
+    @Override
+    public void RedirectToQrCodeListAfterScanning(QrCode qr, String message) {
+        savingQrCode = false;
+        finish();
+        Intent i = new Intent(this, CRUDQrCodeActivity.class);
+        i.putExtra("MSG", message);
+        i.putExtra("com.greg.domain.QrCode", qr);
+        this.startActivity(i);
     }
 }

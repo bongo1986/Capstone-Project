@@ -1,5 +1,9 @@
 package com.greg.presentation;
 
+import android.net.Uri;
+
+import com.greg.domain.QrCode;
+import com.greg.domain.QrCodeService;
 import com.greg.qrdb.R;
 import com.greg.utils.StringRetreiver;
 
@@ -12,10 +16,14 @@ public class QrCodeListPresenter implements BasePresenter<QrCodeListView> {
 
     private QrCodeListView mQrCodeListView;
     private StringRetreiver mStringRetreiver;
+    private QrCodeService mQrCodeService;
+    private boolean mIsTablet;
+    private int mQrCodesCount;
 
     @Inject
-    public QrCodeListPresenter(StringRetreiver sr){
+    public QrCodeListPresenter(StringRetreiver sr, QrCodeService qrCodeService){
         mStringRetreiver = sr;
+        mQrCodeService = qrCodeService;
     }
 
     @Override
@@ -23,7 +31,8 @@ public class QrCodeListPresenter implements BasePresenter<QrCodeListView> {
         mQrCodeListView = view;
     }
 
-    public void afterAction(String msg){
+    public void init(String msg, boolean isTablet){
+        mIsTablet = isTablet;
         if(msg != null) {
             switch (msg) {
                 case "CREATE":
@@ -35,9 +44,38 @@ public class QrCodeListPresenter implements BasePresenter<QrCodeListView> {
                 case "DELETE":
                     mQrCodeListView.SnackBar(mStringRetreiver.getString(R.string.text_qr_code_deleted));
                     break;
+                case "MENU_SCANNED_CODES":
+                    mQrCodeListView.toggleAddButton(false);
+                    mQrCodeListView.setTitle(mStringRetreiver.getString(R.string.scanned_qr_codes_menu_item));
+                    break;
                 default:
                     break;
             }
+        }
+        if(mIsTablet){
+            mQrCodeListView.toggleNoElementSelectedMessage(true);
+            mQrCodeListView.toggleQrCodesContainer(false);
+
+        }
+    }
+    public void setQrCodesCount(int count){
+        mQrCodesCount = count;
+        if(count == 0){
+            mQrCodeListView.showNoQrCodesMessage();
+            mQrCodeListView.toggleNoElementSelectedMessage(false);
+        }
+    }
+    public void qrCodeSelected(QrCode qr){
+        if(mIsTablet) {
+            mQrCodeListView.toggleNoElementSelectedMessage(false);
+            mQrCodeListView.toggleQrCodesContainer(true);
+
+        }
+    }
+    public void shareQrCode(QrCode qr){
+        Uri uri = mQrCodeService.getUriToSharedFile(qr);
+        if(uri != null){
+            mQrCodeListView.sendShareIntent(uri);
         }
     }
 

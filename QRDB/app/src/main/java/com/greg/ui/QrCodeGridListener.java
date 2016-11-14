@@ -8,6 +8,7 @@ import com.greg.domain.QrCode;
 /**
  * Created by Greg on 06-11-2016.
  */
-public interface QrCodeSelectedListener {
+public interface QrCodeGridListener {
     void QrCodeSelected(QrCode m, ImageView imageView);
+    void LoaderReady(int elementsCount);
 }

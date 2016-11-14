@@ -29,8 +29,8 @@ public class BaseActivity  extends AppCompatActivity {
         setSupportActionBar(toolbar);
         initNavigationDrawer();
     }
-    public void showSnackBar(View c, String errorText) {
-        Snackbar snackbar = Snackbar.make(c, errorText, Snackbar.LENGTH_LONG);
+    public void showSnackBar(View c, String text) {
+        Snackbar snackbar = Snackbar.make(c, text, Snackbar.LENGTH_LONG);
         snackbar.show();
         View view = snackbar.getView();
         TextView txtv = (TextView) view.findViewById(android.support.design.R.id.snackbar_text);
@@ -72,8 +72,10 @@ public class BaseActivity  extends AppCompatActivity {
                         break;
                     case R.id.scanned_qr_codes:
                         drawerLayout.closeDrawers();
-                        Intent goToScannedQrCodesActivity = new Intent(getApplicationContext(), ScannedQrCodesActivity.class);
-                        startActivity(goToScannedQrCodesActivity);
+                        Intent myQrCodes = new Intent(getApplicationContext(), QrCodeListActivity.class);
+                        myQrCodes.putExtra("AFTER ACTION","MENU_SCANNED_CODES");
+                        myQrCodes.putExtra("SCANNED_ONLY", true );
+                        startActivity(myQrCodes);
                         finish();
                         break;
 
