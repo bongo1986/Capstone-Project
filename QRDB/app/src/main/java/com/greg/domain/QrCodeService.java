@@ -19,6 +19,7 @@ public interface QrCodeService {
     Long InsertQrCodeSync(QrCode code, boolean isScanned, boolean updateBacked);
     Integer UpdateQrCodeSync(QrCode code, boolean updateBacked);
     Integer UpdateScanCount(String uuid, int count);
+    int GetScanCount();
     void SyncScanCounts();
     QrCode GetQrCodeForUuid(UUID uuid);
     //void Sc

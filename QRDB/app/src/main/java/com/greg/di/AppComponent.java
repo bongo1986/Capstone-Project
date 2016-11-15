@@ -5,6 +5,7 @@ import com.greg.ui.CRUDQrCodeActivity;
 import com.greg.ui.CRUDQrCodeFragment;
 import com.greg.ui.QrCodeListActivity;
 import com.greg.ui.QrGridFragment;
+import com.greg.ui.QrWidget;
 import com.greg.ui.ScanActivity;
 import com.greg.utils.QrCodesSyncAdapter;
 
@@ -28,6 +29,7 @@ public interface AppComponent {
     void inject(QrCodeListActivity activity);
     void inject(ScanActivity activity);
     void inject(QrCodesSyncAdapter activity);
+    void inject(QrWidget widget);
 
 }
 

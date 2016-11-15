@@ -258,6 +258,7 @@ public class CRUDQrCodeFragment extends Fragment implements CRUDQrCodeView {
     @Override
     public void hideWaitDialog() {
         progress.hide();
+        progress.dismiss();
     }
 
     private void disableEditText(EditText editText) {

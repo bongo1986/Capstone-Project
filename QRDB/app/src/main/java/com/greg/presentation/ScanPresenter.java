@@ -73,7 +73,11 @@ public class ScanPresenter implements BasePresenter<ScanView>  {
                                 qr.setQrBitmapData(qrBitap.getBitmapBytes());
 
                                 QrCode existing = mQrCodeService.GetQrCodeForUuid(qr.getmUuid());
-                                if (existing != null && existing.ismIsScanned() == true) {
+                                if(existing != null && existing.getmUuid().equals(qr.getmUuid()) && existing.ismIsScanned() == false){
+                                    sub.onNext(null);
+                                    sub.onCompleted();
+                                }
+                                else if (existing != null && existing.ismIsScanned() == true) {
                                     ScanningResult r = new ScanningResult();
                                     r.isExisting = true;
                                     mQrCodeService.UpdateQrCodeSync(qr, false);

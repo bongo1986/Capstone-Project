@@ -157,6 +157,25 @@ public class QrCodeServiceImpl implements QrCodeService {
     }
 
     @Override
+    public int GetScanCount() {
+        int scanCount = 0;
+        Cursor cursor = mContext.getContentResolver().query(
+                QrdbContract.CodeEntry.SCAN_COUNT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        // Test the basic content provider query
+        int rowsCount = cursor.getCount();
+        if(rowsCount > 0){
+            cursor.moveToNext();
+            scanCount = cursor.getInt(0);
+        }
+        return scanCount;
+    }
+
+    @Override
     public void SyncScanCounts() {
 
             Cursor cursor = mContext.getContentResolver().query(

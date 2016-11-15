@@ -24,6 +24,7 @@
         <activity
             android:name="com.greg.ui.QrCodeListActivity"
             android:label="@string/my_qr_codes"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,6 +53,14 @@
             android:authorities="com.greg.qrdb"
             android:name="com.greg.data.QrdbContentProvider"
             android:syncable="true"/>
+
+        <receiver android:name="com.greg.ui.QrWidget" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/qr_widget" />
+        </receiver>
 
         <service
             android:name="com.greg.utils.AuthenticatorService"

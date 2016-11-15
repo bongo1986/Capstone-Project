@@ -76,8 +76,8 @@ public class QrGridFragment extends Fragment implements
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter = new QrCodesAdapter(getActivity() , data, mQrCodeGridListener);
-        mQrCodesContainer.setAdapter(mAdapter);
         mQrCodesContainer.setLayoutManager(mSglm);
+        mQrCodesContainer.setAdapter(mAdapter);
         if(data == null || data.getCount() == 0){
             mQrCodeGridListener.LoaderReady(0);
         }
