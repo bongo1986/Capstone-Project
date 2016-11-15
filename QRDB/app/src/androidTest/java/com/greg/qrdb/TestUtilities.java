@@ -28,4 +28,19 @@ public class TestUtilities {
         return values;
     }
 
+    static ContentValues createCodeValues(int index, int scan_count) {
+
+        UUID uuid = UUID.randomUUID();
+
+        ContentValues values = new ContentValues();
+        values.put(QrdbContract.CodeEntry.COLUMN_DESCRIPTION, "Test description" + Integer.toString(index));
+        values.put(QrdbContract.CodeEntry.COLUMN_TITLE, "Test title" + Integer.toString(index));
+        values.put(QrdbContract.CodeEntry.COLUMN_QR_GUID, uuid.toString());
+        values.put(QrdbContract.CodeEntry.COLUMN_SCAN_COUNT, scan_count);
+        values.put(QrdbContract.CodeEntry.COLUMN_IS_SCANNED, 0);
+        // movieValues.put(QrdbContract.CodeEntry.COLUMN_QR_CODE_IMAGE_DATA, (byte[])null);
+
+        return values;
+    }
+
 }

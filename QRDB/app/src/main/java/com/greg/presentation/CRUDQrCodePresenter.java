@@ -28,7 +28,7 @@ public class CRUDQrCodePresenter implements BasePresenter<CRUDQrCodeView>{
     public QrCode init(QrCode qrCode){
         if(qrCode == null){
             QrBitmap qrBitap = mQrCodeService.GenerateNewQrCode();
-            qrCode = new QrCode("", "", qrBitap.getmUUID(), qrBitap.getBitmapBytes(), true);
+            qrCode = new QrCode("", "", qrBitap.getmUUID(), qrBitap.getBitmapBytes(), true, 0);
             mCRUDQrCodeView.loadModel(qrCode);
             mCRUDQrCodeView.hideDeleteButton();
             mCRUDQrCodeView.hideUpdateButton();
@@ -72,7 +72,7 @@ public class CRUDQrCodePresenter implements BasePresenter<CRUDQrCodeView>{
         boolean errorFound = validateUserInput(qr);
         if(errorFound == false) {
             mCRUDQrCodeView.showWaitDialog();
-            mQrCodeService.InsertQRcode(qr, false)
+            mQrCodeService.InsertQRcode(qr, false, true)
                     .subscribeOn(mThreadProvider.newThread())
                     .observeOn(mThreadProvider.mainThread()).subscribe(id -> {
                 if (mCRUDQrCodeView != null) {
@@ -93,7 +93,7 @@ public class CRUDQrCodePresenter implements BasePresenter<CRUDQrCodeView>{
         boolean errorFound = validateUserInput(qr);
         if(errorFound == false) {
             mCRUDQrCodeView.showWaitDialog();
-            mQrCodeService.UpdateQrCode(qr)
+            mQrCodeService.UpdateQrCode(qr, true)
                     .subscribeOn(mThreadProvider.newThread())
                     .observeOn(mThreadProvider.mainThread()).subscribe(count -> {
                 if (mCRUDQrCodeView != null) {
@@ -115,7 +115,7 @@ public class CRUDQrCodePresenter implements BasePresenter<CRUDQrCodeView>{
     }
     public void DeleteConfirmed(QrCode qr){
         mCRUDQrCodeView.showWaitDialog();
-        mQrCodeService.DeleteQrCode(qr.getmUuid())
+        mQrCodeService.DeleteQrCode(qr, qr.ismIsScanned() == false)
                 .subscribeOn(mThreadProvider.newThread())
                 .observeOn(mThreadProvider.mainThread())
                 .subscribe(count -> {

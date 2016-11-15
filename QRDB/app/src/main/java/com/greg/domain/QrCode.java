@@ -15,6 +15,16 @@ public class QrCode implements Parcelable {
     private String mTitle;
     private String mDescription;
     private boolean mIsScanned;
+    private int mScanCount;
+
+    public int getmScanCount() {
+        return mScanCount;
+    }
+
+    public void setmScanCount(int mScanCount) {
+        this.mScanCount = mScanCount;
+    }
+
     private UUID mUuid;
     private byte[] mQrBitmapData;
 
@@ -26,12 +36,21 @@ public class QrCode implements Parcelable {
         this.mIsScanned = mIsScanned;
     }
 
-    public QrCode(String mDescription, String mTitle, UUID mUuid, byte[] mQrBitmapData, boolean mIsScanned) {
+    public QrCode(String mDescription, String mTitle, UUID mUuid, byte[] mQrBitmapData, boolean mIsScanned, int scanCount) {
         this.mDescription = mDescription;
         this.mTitle = mTitle;
         this.mUuid = mUuid;
         this.mQrBitmapData = mQrBitmapData;
         this.mIsScanned = mIsScanned;
+        this.mScanCount = scanCount;
+    }
+    public QrCode(String mDescription, String mTitle, String mUuid,boolean mIsScanned, int mScanCount) {
+        this.mDescription = mDescription;
+        this.mTitle = mTitle;
+        this.mUuid = UUID.fromString(mUuid);
+        this.mQrBitmapData = null;
+        this.mIsScanned = mIsScanned;
+        this.mScanCount = mScanCount;
 
     }
 

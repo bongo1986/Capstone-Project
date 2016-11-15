@@ -66,7 +66,7 @@ public class CRUDQrCodePresenterTests {
 
 
         presenterToTest.setView(mockView);
-        QrCode newQrCode = new QrCode("aaa","", UUID.randomUUID(),new byte[]{0,1}, false);
+        QrCode newQrCode = new QrCode("aaa","", UUID.randomUUID(),new byte[]{0,1}, false,0);
         presenterToTest.CreateNewQrCode(newQrCode);
         verify(mockView, times(1)).showTitleError(anyString());
 
@@ -76,7 +76,7 @@ public class CRUDQrCodePresenterTests {
 
 
         presenterToTest.setView(mockView);
-        QrCode newQrCode = new QrCode("aaa","", UUID.randomUUID(),new byte[]{0,1},false);
+        QrCode newQrCode = new QrCode("aaa","", UUID.randomUUID(),new byte[]{0,1},false,0);
         presenterToTest.UpdateQrCode(newQrCode);
         verify(mockView, times(1)).showTitleError(anyString());
 
@@ -86,7 +86,7 @@ public class CRUDQrCodePresenterTests {
 
         presenterToTest.setView(mockView);
 
-        QrCode newQrCode = new QrCode("","aaa", UUID.randomUUID(),new byte[]{0,1},false);
+        QrCode newQrCode = new QrCode("","aaa", UUID.randomUUID(),new byte[]{0,1},false,0);
         presenterToTest.CreateNewQrCode(newQrCode);
         verify(mockView, times(1)).showDescriptionError(anyString());
 
@@ -96,7 +96,7 @@ public class CRUDQrCodePresenterTests {
 
         presenterToTest.setView(mockView);
 
-        QrCode newQrCode = new QrCode("","aaa", UUID.randomUUID(),new byte[]{0,1}, false);
+        QrCode newQrCode = new QrCode("","aaa", UUID.randomUUID(),new byte[]{0,1}, false,0);
         presenterToTest.UpdateQrCode(newQrCode);
         verify(mockView, times(1)).showDescriptionError(anyString());
 
@@ -112,7 +112,7 @@ public class CRUDQrCodePresenterTests {
             title += "a";
         }
 
-        QrCode newQrCode = new QrCode("desc",title, UUID.randomUUID(),new byte[]{0,1}, false);
+        QrCode newQrCode = new QrCode("desc",title, UUID.randomUUID(),new byte[]{0,1}, false,0);
         presenterToTest.CreateNewQrCode(newQrCode);
         verify(mockView, times(1)).showTitleError("30");
 
@@ -128,7 +128,7 @@ public class CRUDQrCodePresenterTests {
             title += "a";
         }
 
-        QrCode newQrCode = new QrCode("desc",title, UUID.randomUUID(),new byte[]{0,1},false);
+        QrCode newQrCode = new QrCode("desc",title, UUID.randomUUID(),new byte[]{0,1},false,0);
         presenterToTest.UpdateQrCode(newQrCode);
         verify(mockView, times(1)).showTitleError("30");
 
@@ -144,7 +144,7 @@ public class CRUDQrCodePresenterTests {
             description += "a";
         }
 
-        QrCode newQrCode = new QrCode(description,"title", UUID.randomUUID(),new byte[]{0,1}, false);
+        QrCode newQrCode = new QrCode(description,"title", UUID.randomUUID(),new byte[]{0,1}, false,0);
         presenterToTest.CreateNewQrCode(newQrCode);
         verify(mockView, times(1)).showDescriptionError("300");
 
@@ -160,7 +160,7 @@ public class CRUDQrCodePresenterTests {
             description += "a";
         }
 
-        QrCode newQrCode = new QrCode(description,"title", UUID.randomUUID(),new byte[]{0,1}, false);
+        QrCode newQrCode = new QrCode(description,"title", UUID.randomUUID(),new byte[]{0,1}, false,0);
         presenterToTest.UpdateQrCode(newQrCode);
         verify(mockView, times(1)).showDescriptionError("300");
 
@@ -171,8 +171,8 @@ public class CRUDQrCodePresenterTests {
         presenterToTest.setView(mockView);
         TestScheduler testScheduler = new TestScheduler();
         Observable<Long> result = just((long)1).subscribeOn(testScheduler);
-        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false);
-        when(mockService.InsertQRcode(Mockito.eq(newQrCode), anyBoolean())).thenReturn(result);
+        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false,0);
+        when(mockService.InsertQRcode(Mockito.eq(newQrCode), anyBoolean(), anyBoolean())).thenReturn(result);
 
         presenterToTest.CreateNewQrCode(newQrCode);
         verify(mockView, times(1)).showWaitDialog();
@@ -183,8 +183,8 @@ public class CRUDQrCodePresenterTests {
         presenterToTest.setView(mockView);
         TestScheduler testScheduler = new TestScheduler();
         Observable<Integer> result = just(1).subscribeOn(testScheduler);
-        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false);
-        when(mockService.UpdateQrCode(Mockito.eq(newQrCode))).thenReturn(result);
+        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false,0);
+        when(mockService.UpdateQrCode(Mockito.eq(newQrCode), anyBoolean())).thenReturn(result);
 
         presenterToTest.UpdateQrCode(newQrCode);
         verify(mockView, times(1)).showWaitDialog();
@@ -195,8 +195,8 @@ public class CRUDQrCodePresenterTests {
         presenterToTest.setView(mockView);
         TestScheduler testScheduler = new TestScheduler();
         Observable<Long> result = just((long)1).subscribeOn(testScheduler);
-        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false);
-        when(mockService.InsertQRcode(Matchers.any(QrCode.class), anyBoolean())).thenReturn(result);
+        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false,0);
+        when(mockService.InsertQRcode(Matchers.any(QrCode.class), anyBoolean(), anyBoolean())).thenReturn(result);
         presenterToTest.CreateNewQrCode(newQrCode);
         testScheduler.triggerActions();
         verify(mockView, times(1)).hideWaitDialog();
@@ -207,8 +207,8 @@ public class CRUDQrCodePresenterTests {
         presenterToTest.setView(mockView);
         TestScheduler testScheduler = new TestScheduler();
         Observable<Integer> result = just(1).subscribeOn(testScheduler);
-        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false);
-        when(mockService.UpdateQrCode(Matchers.any(QrCode.class))).thenReturn(result);
+        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false,0);
+        when(mockService.UpdateQrCode(Matchers.any(QrCode.class), anyBoolean())).thenReturn(result);
         presenterToTest.UpdateQrCode(newQrCode);
         testScheduler.triggerActions();
         verify(mockView, times(1)).hideWaitDialog();
@@ -219,8 +219,8 @@ public class CRUDQrCodePresenterTests {
         presenterToTest.setView(mockView);
         TestScheduler testScheduler = new TestScheduler();
         Observable<Long> result = just((long)1).subscribeOn(testScheduler);
-        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false);
-        when(mockService.InsertQRcode(Mockito.eq(newQrCode), anyBoolean())).thenReturn(result);
+        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false,0);
+        when(mockService.InsertQRcode(Mockito.eq(newQrCode), anyBoolean(), anyBoolean())).thenReturn(result);
         presenterToTest.CreateNewQrCode(newQrCode);
         testScheduler.triggerActions();
         verify(mockView, times(1)).redirectToMyQrCodesAfterCreate();
@@ -231,8 +231,8 @@ public class CRUDQrCodePresenterTests {
         presenterToTest.setView(mockView);
         TestScheduler testScheduler = new TestScheduler();
         Observable<Integer> result = just(1).subscribeOn(testScheduler);
-        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false);
-        when(mockService.UpdateQrCode(Mockito.eq(newQrCode))).thenReturn(result);
+        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false,0);
+        when(mockService.UpdateQrCode(Mockito.eq(newQrCode), anyBoolean())).thenReturn(result);
         presenterToTest.UpdateQrCode(newQrCode);
         testScheduler.triggerActions();
         verify(mockView, times(1)).redirectToMyQrCodesAfterUpdate();
@@ -244,8 +244,8 @@ public class CRUDQrCodePresenterTests {
         presenterToTest.setView(mockView);
         TestScheduler testScheduler = new TestScheduler();
         Observable<Long> result = just((long)-1).subscribeOn(testScheduler);
-        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false);
-        when(mockService.InsertQRcode(Matchers.any(QrCode.class), anyBoolean())).thenReturn(result);
+        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false,0);
+        when(mockService.InsertQRcode(Matchers.any(QrCode.class), anyBoolean(), anyBoolean())).thenReturn(result);
         presenterToTest.CreateNewQrCode(newQrCode);
         testScheduler.triggerActions();
         verify(mockView, times(1)).hideWaitDialog();
@@ -256,8 +256,8 @@ public class CRUDQrCodePresenterTests {
         presenterToTest.setView(mockView);
         TestScheduler testScheduler = new TestScheduler();
         Observable<Integer> result = just(0).subscribeOn(testScheduler);
-        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false);
-        when(mockService.UpdateQrCode(Matchers.any(QrCode.class))).thenReturn(result);
+        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false,0);
+        when(mockService.UpdateQrCode(Matchers.any(QrCode.class), anyBoolean())).thenReturn(result);
         presenterToTest.UpdateQrCode(newQrCode);
         testScheduler.triggerActions();
         verify(mockView, times(1)).hideWaitDialog();
@@ -268,8 +268,8 @@ public class CRUDQrCodePresenterTests {
         presenterToTest.setView(mockView);
         TestScheduler testScheduler = new TestScheduler();
         Observable<Long> result = just((long)-1).subscribeOn(testScheduler);
-        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false);
-        when(mockService.InsertQRcode(Matchers.any(QrCode.class), anyBoolean())).thenReturn(result);
+        QrCode newQrCode = new QrCode("description","title", UUID.randomUUID(),new byte[]{0,1},false,0);
+        when(mockService.InsertQRcode(Matchers.any(QrCode.class), anyBoolean(), anyBoolean())).thenReturn(result);
         presenterToTest.CreateNewQrCode(newQrCode);
         testScheduler.triggerActions();
         verify(mockView, times(1)).showMessageSnackBar("not saved");

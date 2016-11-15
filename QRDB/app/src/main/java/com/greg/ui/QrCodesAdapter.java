@@ -75,11 +75,12 @@ public class QrCodesAdapter  extends RecyclerView.Adapter<QrCodesAdapter.ViewHol
         String desc = mCursor.getString(mCursor.getColumnIndex(QrdbContract.CodeEntry.COLUMN_DESCRIPTION));
         String uuid = mCursor.getString(mCursor.getColumnIndex(QrdbContract.CodeEntry.COLUMN_QR_GUID));
         int isScanned = mCursor.getInt(mCursor.getColumnIndex(QrdbContract.CodeEntry.COLUMN_IS_SCANNED));
+        int scanCount = mCursor.getInt(mCursor.getColumnIndex(QrdbContract.CodeEntry.COLUMN_SCAN_COUNT));
         byte[] imageData = mCursor.getBlob(mCursor.getColumnIndex(QrdbContract.CodeEntry.COLUMN_QR_CODE_IMAGE_DATA));
         holder.mTitleTextView.setText(title);
         Bitmap bm = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
         holder.mQrImage.setImageBitmap(bm);
-        holder.mCardView.setTag(new QrCode(desc, title, UUID.fromString(uuid), imageData, isScanned == 1));
+        holder.mCardView.setTag(new QrCode(desc, title, UUID.fromString(uuid), imageData, isScanned == 1, scanCount));
 
     }
 

@@ -3,9 +3,11 @@ package com.greg.di;
 import android.content.Context;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.database.FirebaseDatabase;
 import com.greg.QrdbApplication;
-import com.greg.domain.DataRetreiverService;
-import com.greg.domain.DummyDataRetreiverServiceImpl;
+import com.greg.domain.FirebaseService;
+import com.greg.domain.DummyFirebaseServiceImpl;
+import com.greg.domain.FirebaseServiceImpl;
 import com.greg.domain.QrCodeService;
 import com.greg.domain.QrCodeServiceImpl;
 import com.greg.qrdb.R;
@@ -54,13 +56,22 @@ public class AppModule {
         return new StringRetreiverImpl(c);
     }
     @Provides
-    public QrCodeService provideQrcodeService(Context c) {
-        return new QrCodeServiceImpl(c);
+    public FirebaseDatabase provideFirebaseDatabase() {
+        return  FirebaseDatabase.getInstance();
     }
     @Provides
-    public DataRetreiverService provideDataRetreiverService(Context c) {
-        return new DummyDataRetreiverServiceImpl();
+    public FirebaseService provideFirebaseService(FirebaseDatabase fDb,Context c) {
+        return  new FirebaseServiceImpl(fDb,c);
     }
+    @Provides
+    public QrCodeService provideQrcodeService(Context c, FirebaseService fs) {
+        return new QrCodeServiceImpl(c, fs);
+    }
+
+    /*@Provides
+    public FirebaseService provideDataRetreiverService(Context c) {
+        return new DummyFirebaseServiceImpl();
+    }*/
 
 
 

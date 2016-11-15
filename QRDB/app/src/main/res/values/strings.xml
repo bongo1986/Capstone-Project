@@ -32,11 +32,13 @@
     <string name="text_code_not_found">Qr code has not been found</string>
     <string name="text_new_qr_code_saved">New QR code has been saved</string>
     <string name="text_existing_qr">QR code has been already scanned</string>
-
+    <string name="text_widget_info_text">Your QR codes have been scanned %d times</string>
+    
     <string name="content_description_title_input">Title input</string>
     <string name="content_description_description_input">Description input</string>
     <string name="content_description_delete">Delete</string>
     <string name="content_description_update">Update</string>
     <string name="content_description_save">Save</string>
     <string name="content_description_add_qr_code">Add QR code</string>
+    
 </resources>

@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.greg.QrdbApplication;
 import com.greg.domain.QrCode;
 import com.greg.presentation.CRUDQrCodePresenter;
@@ -49,6 +50,9 @@ public class CRUDQrCodeActivity extends BaseActivity  {
 
     private QrCode mQr;
 
+    @Inject
+    FirebaseAnalytics mFirebaseAnalytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +61,9 @@ public class CRUDQrCodeActivity extends BaseActivity  {
         QrdbApplication.getInstance().getAppComponent().inject(this);
         ButterKnife.bind(this);
 
+        Bundle bundle = new Bundle();
+        bundle.putString("SCREEN", "CRUD QR");
+        mFirebaseAnalytics.logEvent("SCREEN",bundle );
 
         Bundle b = getIntent().getExtras();
         if(b != null) {

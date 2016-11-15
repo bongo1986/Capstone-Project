@@ -6,15 +6,18 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+
     <application
         android:name="com.greg.QrdbApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.greg.ui.MainActivity"
+            android:name="com.greg.ui.AboutActivity"
             android:label="@string/about_menu_item"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
@@ -44,15 +47,38 @@
             android:label="@string/scanned_qr_codes_menu_item"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity
-            android:name="com.greg.ui.AboutActivity"
-            android:label="@string/about_menu_item"
-            android:theme="@style/AppTheme.NoActionBar">
 
-        </activity>
         <provider
             android:authorities="com.greg.qrdb"
-            android:name="com.greg.data.QrdbContentProvider" />
+            android:name="com.greg.data.QrdbContentProvider"
+            android:syncable="true"/>
+
+        <service
+            android:name="com.greg.utils.AuthenticatorService"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+
+        </service>
+
+        <service
+            android:name="com.greg.utils.QrCodesSyncService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+
+        </service>
+
     </application>
 
 </manifest>

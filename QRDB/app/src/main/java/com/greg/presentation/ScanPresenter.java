@@ -1,6 +1,8 @@
 package com.greg.presentation;
 
-import com.greg.domain.DataRetreiverService;
+
+import com.greg.domain.FirebaseService;
+import com.greg.domain.QrBitmap;
 import com.greg.domain.QrCode;
 import com.greg.domain.QrCodeService;
 import com.greg.qrdb.R;
@@ -20,7 +22,7 @@ import rx.Subscriber;
 public class ScanPresenter implements BasePresenter<ScanView>  {
 
     ScanView mScanView;
-    DataRetreiverService mDataRetreiverService;
+    FirebaseService mFirebaseService;
     QrCodeService mQrCodeService;
     StringRetreiver mStringRetreiver;
     ThreadProvider mThreadProvider;
@@ -30,8 +32,8 @@ public class ScanPresenter implements BasePresenter<ScanView>  {
         public boolean isExisting;
     }
     @Inject
-    public ScanPresenter(DataRetreiverService mDataRetreiverService, QrCodeService mQrCodeService, StringRetreiver mStringRetreiver, ThreadProvider mThreadProvider){
-        this.mDataRetreiverService = mDataRetreiverService;
+    public ScanPresenter(FirebaseService mFirebaseService, QrCodeService mQrCodeService, StringRetreiver mStringRetreiver, ThreadProvider mThreadProvider){
+        this.mFirebaseService = mFirebaseService;
         this.mQrCodeService = mQrCodeService;
         this.mStringRetreiver = mStringRetreiver;
         this.mThreadProvider = mThreadProvider;
@@ -57,23 +59,31 @@ public class ScanPresenter implements BasePresenter<ScanView>  {
                             sub.onCompleted();
                         }
                         if(isUuidValid) {
-                            QrCode qr = mDataRetreiverService.findScannedCode(scanningString);
+                            QrCode qr = mFirebaseService.findQrCodeByUuid(scanningString);
                             if (qr == null) {
                                 sub.onNext(null);
                                 sub.onCompleted();
                             } else {
+                                int scan_count = qr.getmScanCount();
+                                scan_count++;
+                                qr.setmScanCount(scan_count);
+                                mFirebaseService.updateQrCodeScanCount(qr);
+
+                                QrBitmap qrBitap = mQrCodeService.GetQrBitmapForUuid(qr.getmUuid());
+                                qr.setQrBitmapData(qrBitap.getBitmapBytes());
+
                                 QrCode existing = mQrCodeService.GetQrCodeForUuid(qr.getmUuid());
-                                if (existing != null) {
+                                if (existing != null && existing.ismIsScanned() == true) {
                                     ScanningResult r = new ScanningResult();
                                     r.isExisting = true;
-                                    mQrCodeService.UpdateQrCodeSync(qr);
+                                    mQrCodeService.UpdateQrCodeSync(qr, false);
                                     r.QR = qr;
                                     sub.onNext(r);
                                     sub.onCompleted();
                                 } else {
                                     ScanningResult r = new ScanningResult();
                                     r.isExisting = false;
-                                    mQrCodeService.InsertQrCodeSync(qr, true);
+                                    mQrCodeService.InsertQrCodeSync(qr,true, false);
                                     r.QR = qr;
                                     sub.onNext(r);
                                     sub.onCompleted();

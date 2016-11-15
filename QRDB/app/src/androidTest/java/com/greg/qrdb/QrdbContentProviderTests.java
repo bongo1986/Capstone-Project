@@ -135,6 +135,39 @@ public class QrdbContentProviderTests extends AndroidTestCase {
         assertTrue("Unable to Insert Code into the Database", count  == 0);
         validateCursor("testCodeByIdQuery", cursor2, testValues);
     }
+    public void testScanCount() {
+        // insert our test records into the database
+        QrdbDbHelper dbHelper = new QrdbDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues testValues = TestUtilities.createCodeValues(1, 2);
+        ContentValues testValues2 = TestUtilities.createCodeValues(1, 3);
+
+        long rowId = db.insert(QrdbContract.CodeEntry.TABLE_NAME, null, testValues);
+        long rowId2 = db.insert(QrdbContract.CodeEntry.TABLE_NAME, null, testValues2);
+
+        assertTrue("Unable to Insert PopularMovie into the Database", rowId  != -1);
+
+        db.close();
+
+        // Test the basic content provider query
+        Cursor cursor = mContext.getContentResolver().query(
+                QrdbContract.CodeEntry.SCAN_COUNT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        // Test the basic content provider query
+
+        int rowsCount = cursor.getCount();
+
+        cursor.moveToNext();
+
+        int scanCount = cursor.getInt(0);
+        assertTrue("Unable to Insert Code into the Database", scanCount  == 5);
+        //validateCursor("testCodeByIdQuery", cursor2, testValues);
+    }
 
     public void testInsert() {
 

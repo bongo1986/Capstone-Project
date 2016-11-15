@@ -14,7 +14,7 @@ public class QrdbContract {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     public static final String PATH_CODES = "code";
-
+    public static final String PATH_CODES_SCAN_COUNT = "codesscancount";
 
     public static final class CodeEntry implements BaseColumns {
 
@@ -24,6 +24,9 @@ public class QrdbContract {
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_CODES ).build();
+
+        public static final Uri SCAN_COUNT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_CODES_SCAN_COUNT ).build();
 
         public static Uri buildCodeUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);

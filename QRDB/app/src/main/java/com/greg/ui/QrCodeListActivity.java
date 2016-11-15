@@ -1,7 +1,11 @@
 package com.greg.ui;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.FragmentManager;
+import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -19,13 +23,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.greg.QrdbApplication;
+import com.greg.data.QrdbContract;
 import com.greg.domain.QrCode;
 import com.greg.presentation.QrCodeListPresenter;
 import com.greg.presentation.QrCodeListView;
 import com.greg.qrdb.R;
 
 import java.io.OutputStream;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -86,10 +98,59 @@ public class QrCodeListActivity extends BaseActivity implements QrCodeGridListen
         mQrGridFragment.setQrCodeSelectedListener(this);
 
         Bundle bundle = new Bundle();
-        bundle.putString("QR CODES", "QR CODES");
+        bundle.putString("SCREEN", "QR CODES LIST");
+        mFirebaseAnalytics.logEvent("SCREEN",bundle );
 
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM_LIST,bundle );
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        UUID guid = UUID.randomUUID();
+
+       /* mDatabase.child(guid.toString()).child("title").setValue("title AAAAA_BBBB");
+        mDatabase.child(guid.toString()).child("description").setValue("description AAAAA_BBBB");
+
+
+        Query query = mDatabase.child(guid.toString());
+
+        ValueEventListener valueEventListener = new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                String t = dataSnapshot.child("title").getValue().toString();
+                String d = dataSnapshot.child("description").getValue().toString();
+                mDatabase.child(guid.toString()).child("description").setValue(d + "_updated");
+                mDatabase.child(guid.toString()).child("title").setValue(t + "_updated");
+                query.removeEventListener(this);
+                dataSnapshot.getRef().removeValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError)
+            {
+
+            }
+        };
+
+        query.addValueEventListener(valueEventListener);
+        //query.removeEventListener();
+        query.keepSynced(true);*/
+
+
         mQrCodeListPresenter.init(afterAction, mCrudFragment != null);
+    }
+
+    private Account createDummyAccount(Context context) {
+        Account dummyAccount = new Account("dummyaccount", "com.greg");
+        AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
+        accountManager.addAccountExplicitly(dummyAccount, null, null);
+        ContentResolver.setSyncAutomatically(dummyAccount, QrdbContract.CONTENT_AUTHORITY, true);
+        return dummyAccount;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ContentResolver.requestSync(createDummyAccount(this),  QrdbContract.CONTENT_AUTHORITY, Bundle.EMPTY);
     }
 
     @Override

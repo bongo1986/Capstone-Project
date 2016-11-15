@@ -9,10 +9,10 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.widget.ImageView;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -24,10 +24,10 @@ import com.greg.qrdb.R;
 import java.io.OutputStream;
 import java.util.UUID;
 
-import javax.inject.Inject;
-
 import rx.Observable;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Greg on 03-11-2016.
@@ -35,17 +35,18 @@ import rx.Subscriber;
 public class QrCodeServiceImpl implements QrCodeService {
 
     private Context mContext;
+    private FirebaseService mFirebaseService;
 
-    public QrCodeServiceImpl(Context c){
+    public QrCodeServiceImpl(Context c, FirebaseService fs){
+        mFirebaseService = fs;
         mContext = c;
     }
-    public Observable<Long> InsertQRcode(QrCode code, boolean isScanned){
+    public Observable<Long> InsertQRcode(QrCode code, boolean isScanned, boolean updateBacked){
         Observable<Long> myObservable = Observable.create(
                 new Observable.OnSubscribe<Long>() {
                     @Override
                     public void call(Subscriber<? super Long> sub) {
-
-                        long rowId = InsertQrCodeSync(code, isScanned);
+                        long rowId = InsertQrCodeSync(code, isScanned, updateBacked);
                         sub.onNext(rowId);
                         sub.onCompleted();
 
@@ -55,31 +56,41 @@ public class QrCodeServiceImpl implements QrCodeService {
         return myObservable;
     }
     @Override
-    public Observable<Integer> DeleteQrCode(UUID uuid) {
+    public Observable<Integer> DeleteQrCode(QrCode code, boolean updateBacked) {
         Observable<Integer> myObservable = Observable.create(
                 new Observable.OnSubscribe<Integer>() {
                     @Override
                     public void call(Subscriber<? super Integer> sub) {
-                        int rowsDeleted = mContext.getContentResolver().delete(
-                                QrdbContract.CodeEntry.CONTENT_URI,
-                                QrdbContract.CodeEntry.COLUMN_QR_GUID + " = ?" ,
-                                new String[] { uuid.toString()});
+                        if(isOnline() == false){
+                            sub.onNext(0);
+                            sub.onCompleted();
+                        }
+                        else {
+                            if (updateBacked) {
+                                mFirebaseService.deleteQrCode(code.getmUuid().toString());
+                            }
 
-                        sub.onNext(rowsDeleted);
-                        sub.onCompleted();
+                            int rowsDeleted = mContext.getContentResolver().delete(
+                                    QrdbContract.CodeEntry.CONTENT_URI,
+                                    QrdbContract.CodeEntry.COLUMN_QR_GUID + " = ?",
+                                    new String[]{code.getmUuid().toString()});
+
+                            sub.onNext(rowsDeleted);
+                            sub.onCompleted();
+                        }
                     }
                 }
         );
         return myObservable;
     }
     @Override
-    public Observable<Integer> UpdateQrCode(QrCode code) {
+    public Observable<Integer> UpdateQrCode(QrCode code, boolean updateBacked) {
         Observable<Integer> myObservable = Observable.create(
                 new Observable.OnSubscribe<Integer>() {
                     @Override
                     public void call(Subscriber<? super Integer> sub) {
 
-                        int rowsUpdated = UpdateQrCodeSync(code);
+                        int rowsUpdated = UpdateQrCodeSync(code, updateBacked);
 
                         sub.onNext(rowsUpdated);
                         sub.onCompleted();
@@ -93,7 +104,13 @@ public class QrCodeServiceImpl implements QrCodeService {
         return getQrBitmapForUuid(uuid);
     }
     @Override
-    public Long InsertQrCodeSync(QrCode code, boolean isScanned) {
+    public Long InsertQrCodeSync(QrCode code, boolean isScanned, boolean updateBacked) {
+        if(isOnline() == false){
+            return new Long(-1);
+        }
+        if(updateBacked){
+            mFirebaseService.insertQrCode(code);
+        }
         ContentResolver cr = mContext.getContentResolver();
         ContentValues values = new ContentValues();
         values.put(QrdbContract.CodeEntry.COLUMN_DESCRIPTION, code.getmDescription());
@@ -106,11 +123,17 @@ public class QrCodeServiceImpl implements QrCodeService {
         return ContentUris.parseId(insertedUri);
     }
     @Override
-    public Integer UpdateQrCodeSync(QrCode code) {
+    public Integer UpdateQrCodeSync(QrCode code, boolean updateBacked) {
+        if(isOnline() == false){
+            return 0;
+        }
+        if(updateBacked){
+            mFirebaseService.updateQrCodeInfo(code);
+        }
         ContentValues values = new ContentValues();
         values.put(QrdbContract.CodeEntry.COLUMN_DESCRIPTION, code.getmDescription());
         values.put(QrdbContract.CodeEntry.COLUMN_TITLE, code.getmTitle());
-
+        values.put(QrdbContract.CodeEntry.COLUMN_SCAN_COUNT, code.getmScanCount());
 
         return mContext.getContentResolver().update(
                 QrdbContract.CodeEntry.CONTENT_URI,
@@ -118,6 +141,50 @@ public class QrCodeServiceImpl implements QrCodeService {
                 QrdbContract.CodeEntry.COLUMN_QR_GUID + " = ?" ,
                 new String[] { code.getmUuid().toString()});
     }
+
+
+
+    @Override
+    public Integer UpdateScanCount(String uuid, int count) {
+        ContentValues values = new ContentValues();
+        values.put(QrdbContract.CodeEntry.COLUMN_SCAN_COUNT, count);
+
+        return mContext.getContentResolver().update(
+                QrdbContract.CodeEntry.CONTENT_URI,
+                values,
+                QrdbContract.CodeEntry.COLUMN_QR_GUID + " = ? and " + QrdbContract.CodeEntry.COLUMN_IS_SCANNED +" = 0" ,
+                new String[] { uuid});
+    }
+
+    @Override
+    public void SyncScanCounts() {
+
+            Cursor cursor = mContext.getContentResolver().query(
+                                QrdbContract.CodeEntry.CONTENT_URI,
+                                null,
+                                QrdbContract.CodeEntry.COLUMN_IS_SCANNED + " = ?",
+                                new String[] { "0" },
+                                null
+                        );
+
+                        if (cursor.moveToFirst()){
+                            do{
+                                String uuid = cursor.getString(cursor.getColumnIndex(QrdbContract.CodeEntry.COLUMN_QR_GUID));
+                                if(isOnline() == true){
+                                    QrCode backend_code = mFirebaseService.findQrCodeByUuid(uuid);
+                                    if(backend_code != null){
+                                        UpdateScanCount(uuid, backend_code.getmScanCount());
+                                    }
+                                }
+                                // do what ever you want here
+                            }while(cursor.moveToNext());
+                        }
+                        cursor.close();
+
+
+
+    }
+
     @Override
     public QrCode GetQrCodeForUuid(UUID uuid) {
         QrCode qr = null;
@@ -134,9 +201,10 @@ public class QrCodeServiceImpl implements QrCodeService {
             String title = mCursor.getString(mCursor.getColumnIndex(QrdbContract.CodeEntry.COLUMN_TITLE));
             String desc = mCursor.getString(mCursor.getColumnIndex(QrdbContract.CodeEntry.COLUMN_DESCRIPTION));
             String uuidStr = mCursor.getString(mCursor.getColumnIndex(QrdbContract.CodeEntry.COLUMN_QR_GUID));
+            int scan_count = mCursor.getInt(mCursor.getColumnIndex(QrdbContract.CodeEntry.COLUMN_SCAN_COUNT));
             int isScanned = mCursor.getInt(mCursor.getColumnIndex(QrdbContract.CodeEntry.COLUMN_IS_SCANNED));
             byte[] imageData = mCursor.getBlob(mCursor.getColumnIndex(QrdbContract.CodeEntry.COLUMN_QR_CODE_IMAGE_DATA));
-            qr = new QrCode(desc,title, UUID.fromString(uuidStr), imageData, isScanned == 1);
+            qr = new QrCode(desc,title, UUID.fromString(uuidStr), imageData, isScanned == 1, scan_count);
         }
 
         return  qr;
@@ -197,5 +265,12 @@ public class QrCodeServiceImpl implements QrCodeService {
         }
 
         return result;
+    }
+
+    private boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }

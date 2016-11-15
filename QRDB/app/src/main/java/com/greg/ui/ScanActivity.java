@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.zxing.Result;
 import com.greg.QrdbApplication;
 import com.greg.domain.QrCode;
@@ -38,6 +39,9 @@ public class ScanActivity extends BaseActivity implements ZXingScannerView.Resul
     CoordinatorLayout mScanContainer;
     @Inject
     ScanPresenter mScanPresenter;
+    @Inject
+    FirebaseAnalytics mFirebaseAnalytics;
+
     private ZXingScannerView mZXingScanner;
 
 
@@ -55,6 +59,9 @@ public class ScanActivity extends BaseActivity implements ZXingScannerView.Resul
         mZXingScanner = new ZXingScannerView(this);
         contentFrame.addView(mZXingScanner);
 
+        Bundle bundle = new Bundle();
+        bundle.putString("SCREEN", "QR CODES LIST");
+        mFirebaseAnalytics.logEvent("SCREEN",bundle );
 
     }
 
@@ -96,7 +103,7 @@ public class ScanActivity extends BaseActivity implements ZXingScannerView.Resul
             savingQrCode = true;
             mScanPresenter.qrCodeScanned(rawResult.getText());
         }
-        mZXingScanner.resumeCameraPreview(this);
+
     }
 
     @Override
@@ -111,6 +118,7 @@ public class ScanActivity extends BaseActivity implements ZXingScannerView.Resul
             showingSnackBar = true;
             showSnackBar(mScanContainer, message);
         }
+        mZXingScanner.resumeCameraPreview(this);
     }
 
     @Override

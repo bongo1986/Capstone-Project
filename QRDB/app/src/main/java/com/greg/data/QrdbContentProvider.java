@@ -16,6 +16,7 @@ public class QrdbContentProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private static final int CODES = 100;
     private static final int CODES_BY_ID = 200;
+    private static final int SCAN_COUNT = 300;
 
     private QrdbDbHelper mQrdbDbHelper;
 
@@ -27,6 +28,7 @@ public class QrdbContentProvider extends ContentProvider {
 
         matcher.addURI(authority, QrdbContract.PATH_CODES, CODES);
         matcher.addURI(authority, QrdbContract.PATH_CODES + "/*", CODES_BY_ID);
+        matcher.addURI(authority, QrdbContract.PATH_CODES_SCAN_COUNT, SCAN_COUNT);
 
         return matcher;
     }
@@ -57,6 +59,11 @@ public class QrdbContentProvider extends ContentProvider {
                         null,
                         sortOrder
                 );
+                break;
+            }
+            case SCAN_COUNT:{
+                String queryTxt = "select sum(" + QrdbContract.CodeEntry.COLUMN_SCAN_COUNT + ") from " + QrdbContract.CodeEntry.TABLE_NAME +" where " + QrdbContract.CodeEntry.COLUMN_IS_SCANNED + " = 0";
+                retCursor =  mQrdbDbHelper.getReadableDatabase().rawQuery(queryTxt, null );
                 break;
             }
             case CODES_BY_ID:
