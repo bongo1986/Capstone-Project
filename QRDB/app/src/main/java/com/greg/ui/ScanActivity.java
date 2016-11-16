@@ -57,6 +57,7 @@ public class ScanActivity extends BaseActivity implements ZXingScannerView.Resul
 
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
         mZXingScanner = new ZXingScannerView(this);
+        mZXingScanner.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         contentFrame.addView(mZXingScanner);
 
         Bundle bundle = new Bundle();

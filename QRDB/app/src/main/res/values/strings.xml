@@ -40,5 +40,6 @@
     <string name="content_description_update">Update</string>
     <string name="content_description_save">Save</string>
     <string name="content_description_add_qr_code">Add QR code</string>
+
     
 </resources>
